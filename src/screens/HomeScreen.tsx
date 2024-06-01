@@ -3,12 +3,18 @@ import {View, FlatList, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../redux/actions/authActions';
 import ProductItem from '../components/ProductItem';
-import {Button, Text, Card, Title, Paragraph} from 'react-native-paper';
+import {Button, Text, Card, Title} from 'react-native-paper';
 import {deleteProductRequest} from '../redux/actions/productActions';
 
 const HomeScreen: React.FC<{navigation: any}> = ({navigation}) => {
   const dispatch = useDispatch();
   const products = useSelector(state => state.products.products);
+
+  // Filter products based on the user who created them
+  const user = useSelector(state => state.auth.user);
+  const userProducts =
+    products?.filter((product: any) => product.createdBy === user?.args?.[0]) ||
+    [];
 
   const handleLogout = () => {
     dispatch(logout());
@@ -18,8 +24,8 @@ const HomeScreen: React.FC<{navigation: any}> = ({navigation}) => {
     dispatch(deleteProductRequest(id));
   };
 
-  const totalProducts = products.length;
-  const totalPrice = products.reduce(
+  const totalProducts = userProducts?.length;
+  const totalPrice = userProducts?.reduce(
     (acc, product: any) => Number(acc) + Number(product.price),
     0,
   );
@@ -27,25 +33,27 @@ const HomeScreen: React.FC<{navigation: any}> = ({navigation}) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={products}
-        ListHeaderComponent={() => (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Text style={styles.title}>Total Products: {totalProducts}</Text>
-            <Text
+        data={userProducts}
+        ListHeaderComponent={() =>
+          userProducts && userProducts?.length > 0 ? (
+            <View
               style={{
-                fontSize: 16,
-                marginBottom: 16,
-                color: 'green',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               }}>
-              Total Price: ₹{totalPrice}
-            </Text>
-          </View>
-        )}
+              <Text style={styles.title}>Total Products: {totalProducts}</Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginBottom: 16,
+                  color: 'green',
+                }}>
+                Total Price: ₹{totalPrice}
+              </Text>
+            </View>
+          ) : null
+        }
         renderItem={({item}) => (
           <Card style={styles.card}>
             <ProductItem
@@ -58,6 +66,7 @@ const HomeScreen: React.FC<{navigation: any}> = ({navigation}) => {
           </Card>
         )}
         keyExtractor={item => item.id}
+        ListEmptyComponent={() => <Title>No products found, Please add</Title>}
       />
       <Button
         mode="contained"

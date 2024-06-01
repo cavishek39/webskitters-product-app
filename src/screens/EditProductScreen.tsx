@@ -15,13 +15,18 @@ const EditProductScreen: React.FC<{
   const [price, setPrice] = useState(product.price);
   const dispatch = useDispatch();
   const error = useSelector((state: RootState) => state.products.error);
+  const createdBy = useSelector(
+    (state: RootState) => state.auth.user?.args?.[0],
+  );
 
   const handleEditProduct = () => {
     if (name && price) {
-      dispatch(editProductRequest(product.id, {name, price}));
+      dispatch(editProductRequest(product.id, {name, price, createdBy}));
       navigation.goBack();
     }
   };
+
+  console.log('product', product);
 
   return (
     <View style={styles.container}>
@@ -36,7 +41,7 @@ const EditProductScreen: React.FC<{
       <TextInput
         inputMode="numeric"
         label="Price"
-        value={price}
+        value={price?.toString()}
         onChangeText={setPrice}
         style={styles.input}
         mode="outlined"

@@ -13,10 +13,13 @@ const AddProductScreen: React.FC<{navigation: RootStackNavigationProp}> = ({
   const [price, setPrice] = useState(undefined);
   const dispatch = useDispatch();
   const error = useSelector((state: RootState) => state.products.error);
+  const createdBy = useSelector(
+    (state: RootState) => state.auth.user?.args?.[0],
+  );
 
   const handleAddProduct = () => {
     if (name && !!price) {
-      dispatch(addProductRequest({name, price}));
+      dispatch(addProductRequest({name, price, createdBy}));
       navigation.goBack();
     }
   };

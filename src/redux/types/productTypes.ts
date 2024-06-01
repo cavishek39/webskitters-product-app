@@ -5,6 +5,7 @@ export interface Product {
   // You can add more fields if needed, such as description, image URL, etc.
   description?: string;
   imageUrl?: string;
+  createdBy: string;
 }
 
 // Action Types

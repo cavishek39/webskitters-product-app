@@ -14,6 +14,8 @@ import {
 import {storage} from '../../../firebase';
 
 // Firestore collection reference
+// Products should be stored based on the user who created them
+
 const productsCollection = storage.collection('products');
 
 // Worker Saga: Will be fired on ADD_PRODUCT_REQUEST action
