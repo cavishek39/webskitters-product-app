@@ -8,6 +8,7 @@ import {
   SIGNUP_FAILURE,
 } from '../types/authTypes';
 import {auth} from '../../../firebase';
+import {ToastAndroid} from 'react-native';
 
 function* loginSaga(action: any) {
   try {
@@ -16,10 +17,11 @@ function* loginSaga(action: any) {
       action.payload.email,
       action.payload.password,
     );
-    console.log('userCredential', userCredential);
     yield put({type: LOGIN_SUCCESS, payload: userCredential.payload});
+    ToastAndroid.show('Login successful', ToastAndroid.SHORT);
   } catch (error) {
     yield put({type: LOGIN_FAILURE, payload: error.message});
+    ToastAndroid.show(error.message, ToastAndroid.SHORT);
   }
 }
 
@@ -30,10 +32,11 @@ function* signupSaga(action: any) {
       action.payload.email,
       action.payload.password,
     );
-    console.log('userCredential', userCredential);
     yield put({type: SIGNUP_SUCCESS, payload: userCredential.payload});
+    ToastAndroid.show('User created successfully', ToastAndroid.SHORT);
   } catch (error) {
     yield put({type: SIGNUP_FAILURE, payload: (error as Error).message});
+    ToastAndroid.show((error as Error).message, ToastAndroid.SHORT);
   }
 }
 
